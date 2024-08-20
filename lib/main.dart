@@ -13,11 +13,6 @@ Future<void> main() async {
   ));
 }
 
-// Future<bool> verifyToken() async {
-//   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-//   return (sharedPreferences.getString('accessToken') != null) ? true : false;
-// }
-
 class MyApp extends StatelessWidget {
   final bool isLogged;
   const MyApp({super.key, required this.isLogged});
@@ -33,7 +28,8 @@ class MyApp extends StatelessWidget {
       initialRoute: (isLogged) ? "home" : "login",
       routes: {
         "home": (context) => const HomeScreen(),
-        "login": (context) => const LoginScreen(),
+        // "login": (context) => LoginScreen(onLogin: (LoginInformation value) {  },),
+        "login": (context) => LoginScreen(),
       },
     );
   }
