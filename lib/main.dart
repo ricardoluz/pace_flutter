@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       routes: {
         "home": (context) => const HomeScreen(),
         // "login": (context) => LoginScreen(onLogin: (LoginInformation value) {  },),
-        "login": (context) => LoginScreen(),
+        "login": (context) => const LoginScreen(),
       },
     );
   }
