@@ -4,8 +4,9 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:pace/screens/login/login_screen.dart';
-import '../home/home_screen.dart';
+
+import '/screens/login/login_screen.dart';
+// import '../home/home_screen.dart';
 import '/services/api_access_service.dart';
 import '/screens/widgets_partial_screen/custom_app_bar.dart';
 
