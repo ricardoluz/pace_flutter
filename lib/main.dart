@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pace/screens/login/sigin_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/login/login_screen.dart';
 import 'services/authentication_service.dart';
@@ -25,11 +26,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: (isLogged) ? "home" : "login",
+      initialRoute: (isLogged) ? "home" : "sigIn",
       routes: {
         "home": (context) => const HomeScreen(),
         // "login": (context) => LoginScreen(onLogin: (LoginInformation value) {  },),
         "login": (context) => const LoginScreen(),
+        "sigIn": (context) => const SigInScreen(),
       },
     );
   }

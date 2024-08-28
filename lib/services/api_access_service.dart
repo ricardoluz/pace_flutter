@@ -22,18 +22,11 @@ class AuthService {
     "{detail: As credenciais de autenticação não foram fornecidas.}": "x",
     "{detail: No active account found with the given credentials}": "x",
     "{non_field_errors: [Unable to log in with provided credentials.]}":
-        "UserNotFindException",
+        "User or password error.",
+    "{email: [user system with this email already exists.]}":
+        "This email already exists.",
+    "{email: [Enter a valid email address.]}": "Email address invalid."
   };
-
-  void errorHandling<String>(messageError) {
-    String typeError = errorMessages[messageError] as String;
-    switch (typeError) {
-      case "UserNotFindException":
-        throw UserNotFindException(messageError);
-      default:
-        throw Exception(messageError);
-    }
-  }
 
   Future<Map<String, dynamic>> xApi({
     required String apiUrl,
@@ -77,7 +70,7 @@ class AuthService {
       String error =
           {content.keys.first: content[content.keys.first]}.toString();
       if (errorMessages.containsKey(error)) {
-        errorHandling(error);
+        throw AccessApiFindException(errorMessages[error]!);
       } else {
         log("Error : $error\n\n");
         throw HttpException(error);
@@ -88,13 +81,13 @@ class AuthService {
   }
 }
 
-class UserNotFindException implements Exception {
+class AccessApiFindException implements Exception {
   final String message;
 
-  UserNotFindException(this.message);
+  AccessApiFindException(this.message);
 
   @override
   String toString() {
-    return "UserNotFindException: $message";
+    return message;
   }
 }

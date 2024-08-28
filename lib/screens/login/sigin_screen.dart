@@ -4,37 +4,28 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:pace/screens/login/login_screen.dart';
 import '../home/home_screen.dart';
 import '/services/api_access_service.dart';
 import '/screens/widgets_partial_screen/custom_app_bar.dart';
 
 final AuthService authService = AuthService();
 
-// class LoginInformation {
-//   final String username;
-//   final String password;
-//
-//   LoginInformation(this.username, this.password);
-// }
-
-class LoginScreen extends StatefulWidget {
-  //
-  // final ValueChanged<LoginInformation> onLogin;
-
-  const LoginScreen({
-    // required this.onLogin,
+class SigInScreen extends StatefulWidget {
+  const SigInScreen({
     super.key,
   });
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SigInScreen> createState() => _SigInScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SigInScreenState extends State<SigInScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  DateTime currentDay = DateTime.now();
+  // final TextEditingController nameController = TextEditingController();
+  // DateTime currentDay = DateTime.now();
 
   @override
   void initState() {
@@ -47,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final ButtonStyle style =
         ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
     return Scaffold(
-      appBar: customAppBar("Login"),
+      appBar: customAppBar("SigIn"),
       body: Form(
         key: _formKey,
         child: Center(
@@ -59,11 +50,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Login',
+                  Text('SigIn',
                       style: Theme.of(context).textTheme.headlineSmall),
                   TextFormField(
                     decoration: const InputDecoration(labelText: 'Username'),
-                    controller: usernameController,
+                    controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your username';
@@ -86,10 +78,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.all(16),
                     child: TextButton(
                       onPressed: () async {},
-                      child: LoginButton(
+                      child: SigInButton(
                           style: style,
                           formKey: _formKey,
-                          usernameController: usernameController,
+                          emailController: emailController,
                           passwordController: passwordController),
                     ),
                   ),
@@ -104,18 +96,18 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-class LoginButton extends StatelessWidget {
-  const LoginButton({
+class SigInButton extends StatelessWidget {
+  const SigInButton({
     super.key,
     required this.style,
     required GlobalKey<FormState> formKey,
-    required this.usernameController,
+    required this.emailController,
     required this.passwordController,
   }) : _formKey = formKey;
 
   final ButtonStyle style;
   final GlobalKey<FormState> _formKey;
-  final TextEditingController usernameController;
+  final TextEditingController emailController;
   final TextEditingController passwordController;
 
   @override
@@ -125,19 +117,23 @@ class LoginButton extends StatelessWidget {
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           try {
-            if (await getUserToken(
-              username: usernameController.value.text,
+            if (await sigInUser(
+              email: emailController.value.text,
               password: passwordController.value.text,
             )) {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const HomeScreen(),
+                    builder: (_) => const LoginScreen(),
                   ));
             }
+          // } on UserNotFindException {
+          //   ScaffoldMessenger.of(context).showSnackBar(
+          //     const SnackBar(content: Text('User or password error.')),
+          //   );
           } on AccessApiFindException catch (e) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(e.toString())),
+               SnackBar(content: Text(e.toString())),
             );
           } on TimeoutException {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -155,26 +151,28 @@ class LoginButton extends StatelessWidget {
   }
 }
 
-Future<bool> getUserToken({
-  required String username,
+Future<bool> sigInUser({
+  required String email,
   required String password,
 }) async {
   try {
     Map<String, dynamic>? response;
     response = await authService.xApi(
-      apiUrl: "/api-token-auth/",
+      apiUrl: "/user-system/api/",
       method: 'post',
-      body: {"username": username, "password": password},
+      body: {
+        "email": email,
+        "password": password,
+        "name": "zzz",
+        "last_name": "zzz",
+      },
     );
-    // TODO: Save the token
     log(response.toString());
-    log(response['token']);
     return true;
   } on AccessApiFindException {
     rethrow;
   } catch (e) {
-    log(e.toString());
-    log("getUserToken");
+    log("sigInUser");
     if (e.toString().contains("TimeoutException")) {
       throw TimeoutException("error");
     }
